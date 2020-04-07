@@ -24,12 +24,6 @@ coverage
 # nyc test coverage
 .nyc_output
 
-# Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
-.grunt
-
-# Bower dependency directory (https://bower.io/)
-bower_components
-
 # node-waf configuration
 .lock-wscript
 
@@ -69,3 +63,6 @@ web_modules/
 .yarn/cache
 .yarn/unplugged
 .yarn/build-state.yml
+
+# webpack output
+dist/

@@ -1,18 +1,15 @@
 // TODO check
 // item.offsetParent === null
 
-import { xPath } from './xpath';
-
 const WORDS_PER_MS = 250 / 60000;
 
 class ElementMetric {
-    element: HTMLElement;
     elapsedTime: number;
     numWords: number;
     score: number;
 }
 
-const trackMap: Map<string, ElementMetric> = new Map();
+const trackMap: WeakMap<HTMLElement, ElementMetric> = new WeakMap();
 
 let lastSnapshot = new Date().getTime();
 
@@ -27,32 +24,21 @@ function snapshot() {
         })
         .filter((element) => element.childElementCount === 0)
         // transform to element metric
-        .map((element) : ElementMetric => {
+        .map((element) : [HTMLElement, ElementMetric] => {
             const elementText: string = element.textContent || '';
-            return {
-                element,
+            return [element, {
                 elapsedTime: 0,
                 numWords: elementText.split(/\s+/).filter(str => str.length > 0).length,
                 score: 0
-            };
+            }];
         })
-        .filter(item => item.numWords > 0);
-
-    const totalVisibleWords = visibleElements.reduce((p, c) => {
-        return p + c.numWords;
-    }, 0);
-
-    // const msToReadAllVisibleWords = totalVisibleWords / WORDS_PER_MS;
-    // console.log('WORDS_PER_MS', WORDS_PER_MS)
-    // console.log('totalVisibleWords', totalVisibleWords)
-    // console.log('msToReadAllVisibleWords', msToReadAllVisibleWords)
+        .filter(pair => pair[1].numWords > 0);
 
     const msSinceLastSnapshot = new Date().getTime() - lastSnapshot;
 
-    for (let elementMetric of visibleElements) {
-        const elementXPath = xPath(elementMetric.element, false);
-        if (trackMap.has(elementXPath)) {
-            const metric = trackMap.get(elementXPath);
+    for (let [element, elementMetric] of visibleElements) {
+        if (trackMap.has(element)) {
+            const metric = trackMap.get(element);
             metric.elapsedTime += msSinceLastSnapshot;
             metric.score = (WORDS_PER_MS * metric.elapsedTime) / metric.numWords;
             console.log(`
@@ -61,9 +47,9 @@ function snapshot() {
                 numWords: ${metric.numWords}
             `);
 
-            metric.element.style.backgroundColor = `hsl(145, ${metric.score}%, 50%)`;
+            element.style.backgroundColor = `hsl(145, ${metric.score}%, 50%)`;
         } else {
-            trackMap.set(elementXPath, elementMetric);
+            trackMap.set(element, elementMetric);
         }
     }
     lastSnapshot = new Date().getTime();
