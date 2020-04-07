@@ -1,0 +1,35 @@
+{
+  "name": "read-tracker",
+  "version": "1.0.0",
+  "description": "Approximates how much of a page and what sections a user has read.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha spec/",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MarkHerhold/page-read-tracker.git"
+  },
+  "keywords": [
+    "page",
+    "read",
+    "track",
+    "progress"
+  ],
+  "author": "Mark Herhold <mark.herhold@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MarkHerhold/page-read-tracker/issues"
+  },
+  "homepage": "https://github.com/MarkHerhold/page-read-tracker#readme",
+  "devDependencies": {
+    "@babel/cli": "7.8.4",
+    "@babel/core": "7.9.0",
+    "@babel/preset-typescript": "7.9.0",
+    "ts-loader": "6.2.2",
+    "typescript": "3.8.3",
+    "webpack": "4.42.1",
+    "webpack-cli": "3.3.11"
+  }
+}
