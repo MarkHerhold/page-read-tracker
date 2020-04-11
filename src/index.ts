@@ -41,11 +41,7 @@ function snapshot() {
             const metric = trackMap.get(element);
             metric.elapsedTime += msSinceLastSnapshot;
             metric.score = (WORDS_PER_MS * metric.elapsedTime) / metric.numWords;
-            console.log(`
-                score: ${metric.score}
-                elapsed: ${metric.elapsedTime}
-                numWords: ${metric.numWords}
-            `);
+            console.log(`score: ${metric.score}\n${metric.numWords} words | ${metric.elapsedTime}ms`);
 
             element.style.backgroundColor = `hsl(145, ${metric.score}%, 50%)`;
         } else {
