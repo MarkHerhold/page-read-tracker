@@ -4,9 +4,11 @@
 const WORDS_PER_MS = 250 / 60000;
 
 class ElementMetric {
-    elapsedTime: number;
-    numWords: number;
-    score: number;
+    elapsedTime: number = 0;
+    numWords: number = 0;
+    get score() {
+        return Math.max(1, (WORDS_PER_MS * this.elapsedTime) / this.numWords);
+    }
 }
 
 const trackMap: WeakMap<HTMLElement, ElementMetric> = new WeakMap();
@@ -26,11 +28,9 @@ function snapshot() {
         // transform to element metric
         .map((element) : [HTMLElement, ElementMetric] => {
             const elementText: string = element.textContent || '';
-            return [element, {
-                elapsedTime: 0,
-                numWords: elementText.split(/\s+/).filter(str => str.length > 0).length,
-                score: 0
-            }];
+            const em = new ElementMetric();
+            em.numWords = elementText.split(/\s+/).filter(str => str.length > 0).length;
+            return [element, em];
         })
         .filter(pair => pair[1].numWords > 0);
 
@@ -40,10 +40,9 @@ function snapshot() {
         if (trackMap.has(element)) {
             const metric = trackMap.get(element);
             metric.elapsedTime += msSinceLastSnapshot;
-            metric.score = (WORDS_PER_MS * metric.elapsedTime) / metric.numWords;
             console.log(`score: ${metric.score}\n${metric.numWords} words | ${metric.elapsedTime}ms`);
 
-            element.style.backgroundColor = `hsl(145, ${metric.score}%, 50%)`;
+            element.style.backgroundColor = `hsl(145, ${metric.score * 100}%, 50%)`;
         } else {
             trackMap.set(element, elementMetric);
         }
