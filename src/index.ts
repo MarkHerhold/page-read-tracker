@@ -7,7 +7,7 @@ class ElementMetric {
     elapsedTime: number = 0;
     numWords: number = 0;
     get score() {
-        return Math.max(1, (WORDS_PER_MS * this.elapsedTime) / this.numWords);
+        return Math.min(1, (WORDS_PER_MS * this.elapsedTime) / this.numWords);
     }
 }
 
