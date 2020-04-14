@@ -18,13 +18,15 @@ let lastSnapshot = new Date().getTime();
 function snapshot() {
     const pageTop = window.pageYOffset;
     const pageBottom = window.innerHeight + pageTop;
-    const elements: HTMLElement[] = Array.apply(null, document.querySelectorAll("h1, h2, h3, h4, h5, h6, p, a, span, div"));
-    let visibleElements = elements
+    const elements: HTMLElement[] = Array.apply(null, document.body.querySelectorAll("h1, h2, h3, h4, h5, h6, a, p, span, li"));
+    const visibleElements = elements
         .filter((element) => {
             const yPos = element.getBoundingClientRect().top + window.scrollY;
             return yPos > pageTop && yPos < pageBottom;
-        })
-        .filter((element) => element.childElementCount === 0)
+        });
+
+    // filter out child nodes contained by the parent
+    const mapped = visibleElements.filter((element) => !elements.includes(element.parentElement))
         // transform to element metric
         .map((element) : [HTMLElement, ElementMetric] => {
             const elementText: string = element.textContent || '';
@@ -34,15 +36,22 @@ function snapshot() {
         })
         .filter(pair => pair[1].numWords > 0);
 
+    const totalVisibleWords = mapped.reduce((count, item) => count += item[1].numWords, 0);
+    console.log('totalVisibleWords', totalVisibleWords)
     const msSinceLastSnapshot = new Date().getTime() - lastSnapshot;
 
-    for (let [element, elementMetric] of visibleElements) {
+    for (let [element, elementMetric] of mapped) {
         if (trackMap.has(element)) {
             const metric = trackMap.get(element);
             metric.elapsedTime += msSinceLastSnapshot;
-            console.log(`score: ${metric.score}\n${metric.numWords} words | ${metric.elapsedTime}ms`);
+            // console.log(`score: ${metric.score}\n${metric.numWords} words | ${metric.elapsedTime}ms`);
 
             element.style.backgroundColor = `hsl(145, ${metric.score * 100}%, 50%)`;
+            for (let child of Array.apply(null, element.childNodes)) {
+                if (child.style) {
+                    child.style.backgroundColor = `hsl(145, ${metric.score * 100}%, 50%)`;
+                }
+            }
         } else {
             trackMap.set(element, elementMetric);
         }
