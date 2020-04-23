@@ -1,5 +1,6 @@
 {
   "name": "read-tracker",
+  "private": true,
   "version": "1.0.0",
   "description": "Approximates how much of a page and what sections a user has read.",
   "main": "index.js",
