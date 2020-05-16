@@ -46,4 +46,4 @@ Updates the internal list of DOM elements and associated scores.
 ## Definitions
 
 `ElementMetric` class
-    * `score` - A number from 0 - 1 representing the likelyhood that a DOM element's text has been read
+* `score` - A number from 0 - 1 representing the likelyhood that a DOM element's text has been read
